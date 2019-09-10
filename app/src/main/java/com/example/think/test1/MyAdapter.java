@@ -1,6 +1,7 @@
 package com.example.think.test1;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     private ArrayList<String> mData;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+
     public MyAdapter(Context context,ArrayList<String> data) {
         this.mData = data;
         this.mContext = context;
