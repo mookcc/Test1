@@ -5,8 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+
+import okhttp3.Call;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -24,6 +30,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        OkHttpUtils.
+                get()
+                .url("http://39.106.138.186:8900/app/v1/rhomepage")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.d("错误", "onError: ");
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.d("成功", "111111: ");
+            }
+        });
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mAdapter = new MyAdapter(MainActivity.this, getData());
     }

@@ -1,8 +1,7 @@
 package com.example.think.test1.utils;
 
-/**
- * Created by Think on 2019/9/10.
- */
+import com.example.think.test1.MyApplication;
+import com.example.think.test1.tools.RxDeviceTool;
 
 import org.json.JSONObject;
 
@@ -16,6 +15,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.Route;
 import okio.BufferedSink;
+
+import static com.example.think.test1.utils.okhttp.TokenInterceptor.exChangeLOW;
+import static com.example.think.test1.utils.okhttp.TokenInterceptor.exChangeUP;
+import static com.example.think.test1.utils.okhttp.TokenInterceptor.toMD5;
+
 
 /**
  * 网络请求工具（备用）
@@ -48,7 +52,7 @@ public class HttpUtil {
 
         // 创建一个post请求
         Request request = new Request.Builder()
-                .url("http://140.143.26.74")
+                .url("http://api.hicc.cn//token")
                 .post(requestBody)
                 .build();
 
@@ -80,14 +84,32 @@ public class HttpUtil {
                 .authenticator(new Authenticator() {
                     @Override
                     public Request authenticate(Route route, Response response) throws IOException {
+                        long time = System.currentTimeMillis();
                         return response.request().newBuilder()
-                                .header("Authorization", "Bearer " + getToken())
+                                .header("sign",getSign(time))
+                                .header("time", time + "")
+                                .header("aptype","2")
+                                .header("did", RxDeviceTool.getDeviceIdIMEI(MyApplication.getContext()))
                                 .build();
                     }
                 }).build();
+
 
         Request request = new Request.Builder().url(url).build();
 
         client.newCall(request).enqueue(callback);
     }
+    private static String getSign(long time){
+        String a = "aptype=2&did="+RxDeviceTool.getDeviceIdIMEI(MyApplication.getContext())+"&time="+time;
+
+//        TLog.i("a::" + a);
+        String b = toMD5(a);
+//        TLog.i("b::" + b);
+        String c = exChangeUP(b)+"cartoon123";
+//        TLog.i("c::" + c);
+        String sign = toMD5(c);
+//        TLog.i("sign::" + sign);
+        return exChangeLOW(sign);
+    }
+
 }
